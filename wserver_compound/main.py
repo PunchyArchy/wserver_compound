@@ -1,0 +1,190 @@
+""" Модуль содержит основной класс WServer """
+from qpi.main import QPI
+from wserver_compound import methods
+
+
+class WServer:
+    """ Класс WServer. С помощью QPI принимает клиентов,
+    выполняет их команды, взаимодействуя с базой данных (GDB, global data base)
+    """
+
+    def __init__(self, port, sql_shell, *args, **kwargs):
+        """
+        Инициация WServer
+
+        :param port: порт, на котором он будет ожидать клиентов
+        :param sql_shell: sql_shell (wsqluse) для подключения к GDB
+        """
+        self.sql_shell = sql_shell
+        self.qpi = QPI('0.0.0.0', port, self,
+                       without_auth=True, auto_start=True,
+                       mark_disconnect=False, name='WServer QPI')
+
+    def get_api_support_methods(self):
+        """ Открыть методы для QPI. """
+        api_methods = {'set_act': {'method': self.set_act},
+                       'set_auto': {'method': self.set_auto},
+                       'set_photos': {'method': self.set_photos},
+                       'set_notes': {'method': self.add_operator_notes},
+                       'set_company': {'method': self.set_company}
+                       }
+        return api_methods
+
+    def set_act(self, auto_id, gross, tare, cargo,
+                time_in, time_out,
+                carrier_id, trash_cat_id, trash_type_id,
+                polygon_id, operator, ex_id, *args, **kwargs):
+        """
+        Добавить новый акт на WServer.
+
+        :param auto_id: ID автомобиля
+        :param gross: Вес-брутто
+        :param tare: Вес-тара
+        :param cargo: Вес-нетто
+        :param time_in: Время въезда
+        :param time_out: Время выезда
+        :param carrier_id: ID перевозчика
+        :param trash_cat_id: ID категории груза
+        :param trash_type_id: ID вида груза
+        :param polygon_id: ID полигона
+        :param operator: ID весовщика
+        :param ex_id: ID записи в wdb
+        :return:
+            В случае успеха:
+                {'status': True, 'info': *id: int*)
+            В случае провала:
+                {'status': False, 'info': Python Traceback}
+        """
+        response = methods.set_act(self.sql_shell, auto_id, gross, tare, cargo,
+                                   time_in, time_out,
+                                   carrier_id, trash_cat_id, trash_type_id,
+                                   polygon_id, operator, ex_id)
+        return response
+
+    def set_auto(self, car_number, polygon, id_type, rg_weight, model, rfid_id,
+                 *args, **kwargs):
+        """
+        Добавить новое авто в GDB
+
+        :param car_number: Гос. номер
+        :param polygon: Полигон, за которым закреплено авто, если авто
+            передвигается по всему региону, его стоит закрепить за РО.
+        :param id_type: Протокол авто (rfid, NEG, tails)
+        :param rg_weight: Справочный вес (тара)
+        :param model: ID модели авто из gdb.auto_models
+        :param rfid_id: ID RFID метки из gdb.rfid_marks
+        :return:
+            В случае успеха:
+                {'status': True, 'info': *id: int*)
+            В случае провала:
+                {'status': False, 'info': Python Traceback}
+        """
+        response = methods.set_auto(self.sql_shell, car_number, polygon,
+                                    id_type, rg_weight, model, rfid_id)
+        return response
+
+    def set_photos(self, record: int, photo_obj: str, photo_type: int):
+        """
+        Сохранить фотографии на WServer.
+
+        :param record: ID заезда
+        :param photo_obj: Объект фото в кодировке base64, но в виде строки
+        :param photo_type: Тип фотографии (gdb.photo_types)
+        :return:
+            В случае успеха:
+                {'status': True, 'info': *id: int*)
+            В случае провала:
+                {'status': False, 'info': Python Traceback}
+        """
+        return methods.set_photos(self.sql_shell, record, photo_obj,
+                                  photo_type)
+
+    def add_operator_notes(self, record, note, note_type, *args, **kwargs):
+        """
+        Добавить комментарии весовщика к заезду.
+
+        :param record: ID заезда
+        :param note: Комментарий
+        :param note_type: Тип комментария (при брутто, добавочный и т.д.)
+        :return:
+            В случае успеха:
+                {'status': True, 'info': *id: int*)
+            В случае провала:
+                {'status': False, 'info': Python Traceback}
+        """
+        return methods.add_operator_notes(record, note, note_type)
+
+    def set_company(self, name, inn, kpp,
+                    polygon, status, ex_id,
+                    active, *args, **kwargs):
+        """
+         Добавить нового перевозчика.
+
+         :param name: Название перевозчика.
+         :param inn: ИНН перевозчика.
+         :param kpp: КПП перевозчика.
+         :param ex_id: ID перевозичка из внешней системы. (1C, например)
+         :param status: Действующий или нет? True/False
+         :param polygon: ID полигона.
+         :param active: Запись по умолчанию активна?
+         :return:
+             В случае успеха:
+                 {'status': True, 'info': *id: int*)
+             В случае провала:
+                 {'status': False, 'info': Python Traceback}
+         """
+        return methods.set_company(self.sql_shell, name, inn, kpp,
+                                   polygon, status, ex_id,
+                                   active)
+
+    def set_trash_cat(self, name, polygon, active=True, *args, **kwargs):
+        """
+          Добавить новую категорию груза.
+
+          :param name: Название категории груза.
+          :param polygon: ID полигона.
+          :param active: Запись по умолчанию активна?
+          :return:
+              В случае успеха:
+                  {'status': True, 'info': *id: int*)
+              В случае провала:
+                  {'status': False, 'info': Python Traceback}
+          """
+        return methods.set_trash_cat(self.sql_shell, name, polygon, active)
+
+    def set_trash_type(self, name: str, category: int, polygon: int,
+                       active: bool = True):
+        """
+        Добавить новый вид груза.
+
+        :param name: Название вида груза.
+        :param category: ID категории груза, за которым этот вид закреплен.
+        :param polygon: ID полигона.
+        :param active: Запись по умолчанию активна?
+        :return:
+            В случае успеха:
+                {'status': True, 'info': *id: int*)
+            В случае провала:
+                {'status': False, 'info': Python Traceback}
+        """
+        return methods.set_trash_type(self.sql_shell, name, category, polygon,
+                                      active)
+
+    def set_operator(self, full_name: str, login: str, password: str,
+                     polygon: int, active: bool = True):
+        """
+        Добавить нового весовщика.
+
+        :param full_name: Полное имя весовщика (ФИО).
+        :param login: Логин пользователя.
+        :param password: Пароль пользователя.
+        :param polygon: ID полигона, за которым закреплен весовщик.
+        :param active: Запись по умолчанию активна?
+        :return:
+            В случае успеха:
+                {'status': True, 'info': *id: int*)
+            В случае провала:
+                {'status': False, 'info': Python Traceback}
+        """
+        return methods.set_operator(self.sql_shell, full_name, login, password,
+                                    polygon, active)
