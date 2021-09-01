@@ -181,8 +181,8 @@ def set_trash_cat(sql_shell, name, polygon, active=True):
 
 @functions.send_data_to_core('trash_types')
 @functions.format_wsqluse_response
-def set_trash_type(sql_shell, name: str, trash_cat_id: int, polygon: int,
-                   active: bool = True):
+def set_trash_type(sql_shell, name: str, polygon: int,
+                   trash_cat_id: int = None, active: bool = True):
     """
     Добавить новый вид груза.
 

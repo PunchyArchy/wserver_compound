@@ -163,7 +163,7 @@ class WServer(Wsqluse):
           """
         return methods.set_trash_cat(self, name, polygon, active)
 
-    def set_trash_type(self, name: str, category: int, polygon: int,
+    def set_trash_type(self, name: str, polygon: int, category: int = None,
                        active: bool = True):
         """
         Добавить новый вид груза.
