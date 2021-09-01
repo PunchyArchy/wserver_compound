@@ -195,7 +195,7 @@ class WServer(Wsqluse):
         return methods.set_operator(self, full_name, login, password,
                                     polygon, active)
 
-    def get_auto_id(self, car_number: str):
+    def get_auto_id(self, car_number: str, *args, **kwargs):
         """ Вернуть ID авто по его гос.номеру.
 
         :param car_number: Гос.номер авто.
