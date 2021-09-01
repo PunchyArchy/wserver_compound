@@ -282,3 +282,17 @@ def get_auto_id(sql_shell, car_number):
     response = sql_shell.try_execute_get(command)
     if response:
         return response[0][0]
+
+
+def get_company_id(sql_shell, company_name: str):
+    """
+    Поолучить ID перевозтчка в БД GDB по его названию.
+
+    :param sql_shell: Экземпляр wsqluse для работы с GDB.
+    :param company_name: Название перевозчика.
+    :return: ID перевозчика.
+    """
+    command = "SELECT id FROM companies WHERE name='{}'".format(company_name)
+    response = sql_shell.try_execute_get(command)
+    if response:
+        return response[0][0]
