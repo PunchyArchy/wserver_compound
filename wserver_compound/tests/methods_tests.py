@@ -79,7 +79,8 @@ class FunctionsTest(unittest.TestCase):
         result = methods.set_trash_cat(test_sql_shell, 'TEST_TRASH_CAT',
                                        polygon=9)
         self.assertTrue(result['status'] and
-                        isinstance(result['info'], int) or not result['status'])
+                        isinstance(result['info'], int) or not result[
+            'status'])
         methods.delete_record(test_sql_shell, 'id', result['info'],
                               'trash_cats')
 
@@ -117,7 +118,6 @@ class FunctionsTest(unittest.TestCase):
                               result_success['info'],
                               'rfid_marks')
 
-
     def test_get_auto_id(self):
         car_number = '450f58f3-'
         response = methods.get_auto_id(test_sql_shell, car_number)
@@ -129,6 +129,14 @@ class FunctionsTest(unittest.TestCase):
         company_name = 'test_company_1'
         response = methods.get_company_id(test_sql_shell, company_name)
         self.assertTrue(isinstance(response, int))
+
+    def test_get_rfid(self):
+        res = methods.get_rfid_id(test_sql_shell, 'FFFF000160')
+        self.assertTrue(isinstance(res, int))
+        res_fail = methods.get_rfid_id(test_sql_shell,
+                                       'a00240sf')
+        self.assertTrue(not res_fail)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -36,7 +36,8 @@ class WServer(Wsqluse):
                        'get_company_id': {'method': self.get_company_id},
                        'set_operator': {'method': self.set_operator},
                        'set_trash_cat': {'method': self.set_trash_cat},
-                       'set_trash_type': {'method': self.set_trash_type}
+                       'set_trash_type': {'method': self.set_trash_type},
+                       'get_rfid_id': {'method': self.get_rfid_id}
                        }
         return api_methods
 
@@ -217,3 +218,13 @@ class WServer(Wsqluse):
         :return: ID или None
         """
         return methods.get_company_id(self, company_name)
+
+    def get_rfid_id(self, rfid: str, *args, **kwargs):
+        """
+        Вернуть ID RFID метки по его коду. (10 символов)
+
+        :param rfid: последовательность условной длины, явяляющей частью номера
+            RFID метки.
+        :return: ID или None.
+        """
+        return methods.get_rfid_id(self, rfid=rfid)

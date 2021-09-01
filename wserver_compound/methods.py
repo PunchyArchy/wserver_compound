@@ -30,7 +30,7 @@ def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
             {'status': 'failed', 'info': Python Traceback}
     """
     if rfid and not rfid_id:
-        rfid_id = functions.get_rfid_id(sql_shell, rfid)
+        rfid_id = get_rfid_id(sql_shell, rfid)
     command = """INSERT INTO auto 
                 (car_number, id_type, rg_weight, auto_model, polygon, rfid_id) 
                 VALUES 
@@ -250,6 +250,21 @@ def delete_record(sql_shell, column: str, value: any, table_name: str):
     command = "DELETE FROM {} WHERE {}={}".format(table_name, column, value)
     response = sql_shell.try_execute(command)
     return response
+
+
+def get_rfid_id(sql_shell, rfid: str):
+    """
+    Получить ID rfid.
+
+    :param sql_shell:
+    :param rfid:
+    :return:
+    """
+    command = "SELECT id FROM rfid_marks WHERE rfid='{}'"
+    command = command.format(rfid)
+    response = sql_shell.try_execute_get(command)
+    if response:
+        return response[0][0]
 
 
 @functions.format_wsqluse_response

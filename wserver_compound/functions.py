@@ -167,17 +167,3 @@ def collect_args(func, *args, **kwargs):
     all_args.update(default_values)
     return all_args
 
-
-def get_rfid_id(sql_shell, rfid: str):
-    """
-    Получить ID rfid.
-
-    :param sql_shell:
-    :param rfid:
-    :return:
-    """
-    command = "SELECT id FROM rfid_marks WHERE rfid='{}'"
-    command = command.format(rfid)
-    response = sql_shell.try_execute_get(command)
-    if response:
-        return response[0][0]
