@@ -1,21 +1,22 @@
 """ Модуль содержит основной класс WServer """
 from qpi.main import QPI
 from wserver_compound import methods
+from wsqluse.wsqluse import Wsqluse
 
 
-class WServer:
+class WServer(Wsqluse):
     """ Класс WServer. С помощью QPI принимает клиентов,
     выполняет их команды, взаимодействуя с базой данных (GDB, global data base)
     """
 
-    def __init__(self, port, sql_shell, *args, **kwargs):
+    def __init__(self, port, *args, **kwargs):
+        super(WServer, self).__init__(*args, **kwargs)
         """
         Инициация WServer
 
         :param port: порт, на котором он будет ожидать клиентов
-        :param sql_shell: sql_shell (wsqluse) для подключения к GDB
+        :pself (wsqluse) для подключения к GDB
         """
-        self.sql_shell = sql_shell
         self.qpi = QPI('0.0.0.0', port, self,
                        without_auth=True, auto_start=True,
                        mark_disconnect=False, name='WServer QPI')
@@ -59,7 +60,7 @@ class WServer:
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        response = methods.set_act(self.sql_shell, auto_id, gross, tare, cargo,
+        response = methods.set_act(self, auto_id, gross, tare, cargo,
                                    time_in, time_out,
                                    carrier_id, trash_cat_id, trash_type_id,
                                    polygon_id, operator, ex_id)
@@ -83,7 +84,7 @@ class WServer:
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        response = methods.set_auto(self.sql_shell, car_number, polygon,
+        response = methods.set_auto(self, car_number, polygon,
                                     id_type, rg_weight, model, rfid_id)
         return response
 
@@ -100,7 +101,7 @@ class WServer:
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        return methods.set_photos(self.sql_shell, record, photo_obj,
+        return methods.set_photos(self, record, photo_obj,
                                   photo_type)
 
     def add_operator_notes(self, record, note, note_type, *args, **kwargs):
@@ -137,7 +138,7 @@ class WServer:
              В случае провала:
                  {'status': False, 'info': Python Traceback}
          """
-        return methods.set_company(self.sql_shell, name, inn, kpp,
+        return methods.set_company(self, name, inn, kpp,
                                    polygon, status, ex_id,
                                    active)
 
@@ -154,7 +155,7 @@ class WServer:
               В случае провала:Отп
                   {'status': False, 'info': Python Traceback}
           """
-        return methods.set_trash_cat(self.sql_shell, name, polygon, active)
+        return methods.set_trash_cat(self, name, polygon, active)
 
     def set_trash_type(self, name: str, category: int, polygon: int,
                        active: bool = True):
@@ -171,7 +172,7 @@ class WServer:
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        return methods.set_trash_type(self.sql_shell, name, category, polygon,
+        return methods.set_trash_type(self, name, category, polygon,
                                       active)
 
     def set_operator(self, full_name: str, login: str, password: str,
@@ -190,5 +191,5 @@ class WServer:
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        return methods.set_operator(self.sql_shell, full_name, login, password,
+        return methods.set_operator(self, full_name, login, password,
                                     polygon, active)

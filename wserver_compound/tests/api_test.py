@@ -9,7 +9,8 @@ class ApiTest(unittest.TestCase):
     """ Тестовый класс """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.wserver = WServer(9996, test_objects.test_sql_shell)
+        self.wserver = WServer(9996, dbname='gdb', user='watchman',
+                               password='hect0r1337', host='192.168.100.118')
         self.qdk = QDK('localhost', 9996)
         self.qdk.make_connection()
 
@@ -38,3 +39,7 @@ class ApiTest(unittest.TestCase):
         self.qdk.execute_method('test_some')
         response = self.qdk.get_data()
         print("RESP", response)
+
+
+if __name__ == "__main__":
+    unittest.main()
