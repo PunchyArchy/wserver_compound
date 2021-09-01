@@ -119,7 +119,7 @@ class WServer(Wsqluse):
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        return methods.add_operator_notes(record, note, note_type)
+        return methods.add_operator_notes(self, record, note, note_type)
 
     def set_company(self, name, inn, kpp,
                     polygon, status, ex_id,
