@@ -125,5 +125,10 @@ class FunctionsTest(unittest.TestCase):
         response = methods.get_auto_id(test_sql_shell, '00000')
         self.assertTrue(not response)
 
+    def test_get_company_id(self):
+        company_name = 'test_company_1'
+        response = methods.get_company_id(test_sql_shell, company_name)
+        self.assertTrue(isinstance(response, int))
+
 if __name__ == '__main__':
     unittest.main()
