@@ -20,6 +20,10 @@ class WServer:
                        without_auth=True, auto_start=True,
                        mark_disconnect=False, name='WServer QPI')
 
+    def start(self):
+        while True:
+            pass
+
     def get_api_support_methods(self):
         """ Открыть методы для QPI. """
         api_methods = {'set_act': {'method': self.set_act},
