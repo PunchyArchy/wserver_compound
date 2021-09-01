@@ -33,7 +33,8 @@ class WServer(Wsqluse):
                        'set_notes': {'method': self.add_operator_notes},
                        'set_company': {'method': self.set_company},
                        'get_auto_id': {'method': self.get_auto_id},
-                       'get_company_id': {'method': self.get_company_id}
+                       'get_company_id': {'method': self.get_company_id},
+                       'set_operator': {'method': self.set_operator}
                        }
         return api_methods
 
