@@ -31,7 +31,8 @@ class WServer(Wsqluse):
                        'set_auto': {'method': self.set_auto},
                        'set_photos': {'method': self.set_photos},
                        'set_notes': {'method': self.add_operator_notes},
-                       'set_company': {'method': self.set_company}
+                       'set_company': {'method': self.set_company},
+                       'get_auto_id': {'method': self.get_auto_id}
                        }
         return api_methods
 
@@ -193,3 +194,10 @@ class WServer(Wsqluse):
         """
         return methods.set_operator(self, full_name, login, password,
                                     polygon, active)
+
+    def get_auto_id(self, car_number: str):
+        """ Вернуть ID авто по его гос.номеру.
+
+        :param car_number: Гос.номер авто.
+        :return: ID авто. """
+        return methods.get_auto_id(self, car_number)

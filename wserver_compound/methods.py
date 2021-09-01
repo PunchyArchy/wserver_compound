@@ -282,4 +282,3 @@ def get_auto_id(sql_shell, car_number):
     response = sql_shell.try_execute_get(command)
     if response:
         return response[0][0]
-    return response
