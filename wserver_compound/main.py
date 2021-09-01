@@ -90,7 +90,8 @@ class WServer(Wsqluse):
                                     id_type, rg_weight, model, rfid_id)
         return response
 
-    def set_photos(self, record: int, photo_obj: str, photo_type: int):
+    def set_photos(self, record: int, photo_obj: str, photo_type: int,
+                   *args, **kwargs):
         """
         Сохранить фотографии на WServer.
 
@@ -178,7 +179,7 @@ class WServer(Wsqluse):
                                       active)
 
     def set_operator(self, full_name: str, login: str, password: str,
-                     polygon: int, active: bool = True):
+                     polygon: int, active: bool = True, *args, **kwargs):
         """
         Добавить нового весовщика.
 
