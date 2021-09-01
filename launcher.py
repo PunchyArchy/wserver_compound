@@ -10,6 +10,6 @@ dbuser = os.environ.get('GDBUSER')
 dbpass = os.environ.get('GDBPASS')
 dbhost = os.environ.get('GDBHOST')
 
-inst = WServer(8888, dbname=dbname, dbuser=dbuser, dbpass=dbpass,
-               dbhost=dbhost)
+inst = WServer(8888, dbname=dbname, user=dbuser, password=dbpass,
+               host=dbhost)
 inst.start()
