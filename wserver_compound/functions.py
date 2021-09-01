@@ -7,7 +7,7 @@ import datetime
 import os
 import inspect
 import uuid
-from gc_qdk.main import GCoreQDK
+from wtas.operators import WTA
 from wserver_compound import settings
 
 
@@ -127,24 +127,15 @@ def send_data_to_core(data_type):
                 polygon = all_args['polygon']
                 if not polygon:
                     all_polygons = get_all_polygon_ids(all_args['sql_shell'])
-                    for polygon in all_polygons:
-                        ar_response = send_ar(all_args['sql_shell'],
-                                              polygon,
-                                              wserver_id=response['info'][0][
-                                                  0],
-                                              data_type=data_type,
-                                              all_args=all_args)
                 else:
-                    ar_response = send_ar(all_args['sql_shell'],
-                                          polygon,
-                                          wserver_id=response['info'][0][0],
-                                          data_type=data_type,
-                                          all_args=all_args)
-                response['ar_response'] = ar_response
+                    all_polygons = [polygon]
+                for polygon in all_polygons:
+                    wta = WTA(data_type, 'gdb', 'watchman', 'hect0r1337',
+                              '192.168.100.118', polygon)
+                    response = wta.deliver(wserver_id=response['info'][0][0],
+                                           **all_args)
             return response
-
         return wrapper
-
     return decorator
 
 
@@ -177,75 +168,16 @@ def collect_args(func, *args, **kwargs):
     return all_args
 
 
-def send_ar(sql_shell, polygon, wserver_id, data_type, all_args):
+def get_rfid_id(sql_shell, rfid: str):
     """
-    Отправить данные сразу на AR.
+    Получить ID rfid.
 
-    :param sql_shell: Экземпляр класса WSQluse, подключенный к GDB.
-    :param polygon: ID полигона. (Если не указан, будет разошлен по всем AR)
-    :param wserver_id: ID этих данных в GDB. (Возвращается после выполннения
-        основного метода.)
-    :param data_type: Тип данных (категория груза, вид, перевозчик и т.д.)
-    :param all_args: Все аргументы метода, передаются дальше для оформления
-        вызова метода QDK.
-    :return: Возрващает ответ от AR.
+    :param sql_shell:
+    :param rfid:
+    :return:
     """
-    user_ip = get_user_ip(sql_shell, polygon)
-    gc_qdk = connect_to_gcore(user_ip)
-    if gc_qdk:
-        ar_response = operate_ar_send(gc_qdk, data_type, wserver_id,
-                                      **all_args)
-        return ar_response
-
-
-def connect_to_gcore(ip: str, port: int = 15500, *args, **kwargs):
-    """
-    Подключиться к GCore. Вернуть экземпляр QDK.
-
-    :param ip: IP адрсе GCore.
-    :param port: Порт QPI.
-    :param args: Аргументы, передаваемые в QDK (логин и пароль, если требуется)
-    :param kwargs: Те же аргументы
-    :return: Возвращает экземпляр QDK, если подключение успешно.
-    """
-    gc_qdk = GCoreQDK(ip, port)
-    try:
-        gc_qdk.make_connection()
-        return gc_qdk
-    except (ConnectionRefusedError, TimeoutError) as e:
-        pass
-
-
-def operate_ar_send(gc_qdk, operation, wserver_id, **kwargs):
-    """
-    Отправка данных в QPI AR.
-
-    :param gc_qdk: Экземпляр QDK, уже подключенный к QPI AR.
-    :param operation: Название операции, метода, который нужно вызвать
-    :param kwargs: Аргументы, которые нужно передать исполняемому методу
-    :return: Возвращает ответ GCore (AR)
-    """
-    if operation == 'operator':
-        gc_qdk.add_operator(kwargs['full_name'],
-                            kwargs['login'],
-                            kwargs['password'],
-                            wserver_id)
-    elif operation == 'auto':
-        gc_qdk.add_auto(kwargs['car_number'],
-                        wserver_id,
-                        kwargs['model'],
-                        kwargs['rfid_id'],
-                        kwargs['id_type'],
-                        kwargs['rg_weight'])
-    elif operation == 'trash_cat':
-        gc_qdk.add_trash_cat(kwargs['name'], wserver_id)
-    elif operation == 'trash_type':
-        gc_qdk.add_trash_type(kwargs['name'],
-                              wserver_id,
-                              kwargs['category'])
-    elif operation == 'company':
-        gc_qdk.add_carrier(kwargs['name'], kwargs['inn'], kwargs['kpp'],
-                           kwargs['ex_id'], kwargs['status'], wserver_id,
-                           kwargs['activity'])
-    ar_response = gc_qdk.get_data()
-    return ar_response
+    command = "SELECT id FROM rfid_marks WHERE rfid='{}'"
+    command = command.format(rfid)
+    response = sql_shell.try_execute_get(command)
+    if response:
+        return response[0][0]

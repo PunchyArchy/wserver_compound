@@ -11,6 +11,7 @@ setup(
     install_requires=[
         'qodex_pi',
         'wsqluse',
-        'gc_qdk'
+        'gc_qdk',
+        'wta'
     ],
 )

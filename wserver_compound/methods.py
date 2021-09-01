@@ -5,10 +5,12 @@
 
 from wserver_compound import functions
 
-@functions.format_wsqluse_response
+
 @functions.send_data_to_core('auto')
+@functions.format_wsqluse_response
 def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
-             rg_weight: int = 0, model: int = 0, rfid_id: int = None):
+             rg_weight: int = 0, model: int = 0, rfid: str = None,
+             rfid_id: int = None):
     """
     Добавить новое авто в GDB
 
@@ -19,13 +21,16 @@ def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
     :param id_type: Протокол авто (rfid, NEG, tails)
     :param rg_weight: Справочный вес (тара)
     :param model: ID модели авто из gdb.auto_models
-    :param rfid_id: ID RFID метки из gdb.rfid_marks
+    :param rfid: номер RFID метки.
+    :param rfid_id: id RFID метки.
     :return:
         В случае успеха:
             {'status': 'success', 'info': *id: int*)
         В случае провала:
             {'status': 'failed', 'info': Python Traceback}
     """
+    if rfid and not rfid_id:
+        rfid_id = functions.get_rfid_id(sql_shell, rfid)
     command = """INSERT INTO auto 
                 (car_number, id_type, rg_weight, auto_model, polygon, rfid_id) 
                 VALUES 
@@ -123,7 +128,7 @@ def add_operator_notes(sql_shell, record, note, note_type):
 
 @functions.format_wsqluse_response
 def set_company(sql_shell, name: str, inn: str, kpp: str,
-                polygon: int, status: bool = True,  ex_id: str = None,
+                polygon: int, status: bool = True, ex_id: str = None,
                 active: bool = True):
     """
     Добавить нового перевозчика.
@@ -150,8 +155,8 @@ def set_company(sql_shell, name: str, inn: str, kpp: str,
     return response
 
 
+@functions.send_data_to_core('trash_cats')
 @functions.format_wsqluse_response
-@functions.send_data_to_core('trash_cat')
 def set_trash_cat(sql_shell, name, polygon, active=True):
     """
     Добавить новую категорию груза.
@@ -174,16 +179,16 @@ def set_trash_cat(sql_shell, name, polygon, active=True):
     return response
 
 
+@functions.send_data_to_core('trash_types')
 @functions.format_wsqluse_response
-@functions.send_data_to_core('trash_type')
-def set_trash_type(sql_shell, name: str, category: int, polygon: int,
+def set_trash_type(sql_shell, name: str, trash_cat_id: int, polygon: int,
                    active: bool = True):
     """
     Добавить новый вид груза.
 
     :param sql_shell: Объект WSQLuse, для взаимодействия с GDB.
     :param name: Название вида груза.
-    :param category: ID категории груза, за которым этот вид закреплен.
+    :param trash_cat_id: ID категории груза, за которым этот вид закреплен.
     :param polygon: ID полигона.
     :param active: Запись по умолчанию активна?
     :return:
@@ -195,13 +200,13 @@ def set_trash_type(sql_shell, name: str, category: int, polygon: int,
     command = """INSERT INTO trash_types
                 (name, category, polygon, active)
                 VALUES (%s, %s, %s, %s)"""
-    values = (name, category, polygon, active)
+    values = (name, trash_cat_id, polygon, active)
     response = sql_shell.try_execute_double(command, values)
     return response
 
 
+@functions.send_data_to_core('users')
 @functions.format_wsqluse_response
-@functions.send_data_to_core('operator')
 def set_operator(sql_shell, full_name: str, login: str, password: str,
                  polygon: int, active: bool = True):
     """
@@ -244,4 +249,37 @@ def delete_record(sql_shell, column: str, value: any, table_name: str):
     """
     command = "DELETE FROM {} WHERE {}={}".format(table_name, column, value)
     response = sql_shell.try_execute(command)
+    return response
+
+
+@functions.format_wsqluse_response
+def add_rfid(sql_shell, rfid_num: str, rfid_type: int, owner: int):
+    """
+    Добавить новую RFID метку.
+
+    :param sql_shell: Объект WSQLuse для работы с БД.
+    :param rfid_num: Номер RFID метки.
+    :param rfid_type: Тип RFID метки.
+    :param owner: ID владельца метки.
+    :return:
+    """
+    command = """INSERT INTO rfid_marks (rfid, owner_id, rfid_type) 
+                VALUES (%s, %s, %s)"""
+    values = (rfid_num, owner, rfid_type)
+    response = sql_shell.try_execute_double(command, values)
+    return response
+
+
+def get_auto_id(sql_shell, car_number):
+    """
+    Поолучить ID авто в БД GDB по его гос.номеру.
+
+    :param sql_shell: Экземпляр wsqluse для работы с GDB.
+    :param car_number: Гос. номер авто.
+    :return: ID авто.
+    """
+    command = "SELECT id FROM auto WHERE car_number='{}'".format(car_number)
+    response = sql_shell.try_execute_get(command)
+    if response:
+        return response[0][0]
     return response

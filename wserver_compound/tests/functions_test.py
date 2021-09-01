@@ -55,5 +55,12 @@ class FunctionsTest(unittest.TestCase):
         response = functions.get_all_polygon_ids(test_objects.test_sql_shell)
         print(response)
 
+    def test_get_rfid(self):
+        res = functions.get_rfid_id(test_objects.test_sql_shell, 'FFFF000160')
+        self.assertTrue(isinstance(res, int))
+        res_fail = functions.get_rfid_id(test_objects.test_sql_shell,
+                                         'a00240sf')
+        self.assertTrue(not res_fail)
+
 if __name__ == '__main__':
     unittest.main()

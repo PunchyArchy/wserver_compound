@@ -30,7 +30,6 @@ class ApiTest(unittest.TestCase):
                                     trash_cat_id=None, trash_type_id=None,
                                     polygon_id=None, operator=None, ex_id=1338)
         response = self.qdk.get_data()
-        print(response)
         self.assertTrue(response['status'] and
                         response['core_method'] == 'add_act' and
                         isinstance(response['info'], int))

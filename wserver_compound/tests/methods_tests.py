@@ -13,15 +13,25 @@ class FunctionsTest(unittest.TestCase):
 
     def test_set_auto(self):
         """ Тестирование функции добавления нового авто в GDB """
-        response = methods.set_auto(test_sql_shell,
-                                    car_number=str(uuid.uuid4())[:9],
-                                    polygon=9,
-                                    id_type='rfid',
-                                    rg_weight=0)
-        print("RESPONSE", response)
-        self.assertTrue(response['status'],
-                        isinstance(response['info'], int))
-        methods.delete_record(test_sql_shell, 'id', response['info'], 'auto')
+        car_number = str(uuid.uuid4())[:9]
+        response_success = methods.set_auto(test_sql_shell,
+                                            car_number=car_number,
+                                            polygon=9,
+                                            id_type='rfid',
+                                            rg_weight=0,
+                                            rfid='SAF')
+
+        self.assertTrue(response_success['status'])
+        response_fail = methods.set_auto(test_sql_shell,
+                                         car_number=car_number,
+                                         polygon=9,
+                                         id_type='rfid',
+                                         rg_weight=0,
+                                         rfid='SAF')
+        self.assertTrue(not response_fail['status'])
+        methods.delete_record(test_sql_shell, 'id',
+                              response_success['info'],
+                              'auto')
 
     def test_set_act(self):
         """ Тестирование функции добавления нового акта """
@@ -48,7 +58,8 @@ class FunctionsTest(unittest.TestCase):
 
     def test_add_note(self):
         """ Тестирование добавления комментария к заезду """
-        result = methods.add_operator_notes(test_sql_shell, None, 'TEST_NOTE', 1)
+        result = methods.add_operator_notes(test_sql_shell, None, 'TEST_NOTE',
+                                            1)
         self.assertTrue(result['status'],
                         isinstance(result['info'], int))
         methods.delete_record(test_sql_shell, 'id', result['info'],
@@ -67,17 +78,16 @@ class FunctionsTest(unittest.TestCase):
         """ Тетстирование добавления новой компании-перевозчика """
         result = methods.set_trash_cat(test_sql_shell, 'TEST_TRASH_CAT',
                                        polygon=9)
-        self.assertTrue(result['status'],
-                        isinstance(result['info'], int))
+        self.assertTrue(result['status'] and
+                        isinstance(result['info'], int) or not result['status'])
         methods.delete_record(test_sql_shell, 'id', result['info'],
                               'trash_cats')
 
     def test_set_trash_type(self):
         """ Тетстирование добавления новой компании-перевозчика """
         result = methods.set_trash_type(test_sql_shell, 'TEST_TRASH_NAME',
-                                        category=None,
+                                        trash_cat_id=None,
                                         polygon=9)
-        print('RES', result)
         self.assertTrue(result['status'],
                         isinstance(result['info'], int))
         methods.delete_record(test_sql_shell, 'id', result['info'],
@@ -87,12 +97,33 @@ class FunctionsTest(unittest.TestCase):
         result = methods.set_operator(test_sql_shell, 'FIO', 'LOGIN', 'pw',
                                       polygon=None)
         self.assertTrue(result['status'] and
-                        isinstance(result['info'], int) and
-                        'ar_response' in list(result.keys()))
+                        isinstance(result['info'], int))
         methods.delete_record(test_sql_shell, 'id', result['info'],
                               'operators')
 
+    def test_add_rfid(self):
+        random_rfid = str(uuid.uuid4())[:10]
+        result_success = methods.add_rfid(test_sql_shell,
+                                          rfid_num=random_rfid,
+                                          rfid_type=1,
+                                          owner=9)
+        self.assertTrue(result_success['status'])
+        result_failed = methods.add_rfid(test_sql_shell,
+                                         rfid_num=random_rfid,
+                                         rfid_type=1,
+                                         owner=9)
+        self.assertTrue(not result_failed['status'])
+        methods.delete_record(test_sql_shell, 'id',
+                              result_success['info'],
+                              'rfid_marks')
 
+
+    def test_get_auto_id(self):
+        car_number = '450f58f3-'
+        response = methods.get_auto_id(test_sql_shell, car_number)
+        self.assertTrue(isinstance(response, int))
+        response = methods.get_auto_id(test_sql_shell, '00000')
+        self.assertTrue(not response)
 
 if __name__ == '__main__':
     unittest.main()

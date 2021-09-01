@@ -35,7 +35,7 @@ class WServer:
                 carrier_id, trash_cat_id, trash_type_id,
                 polygon_id, operator, ex_id, *args, **kwargs):
         """
-        Добавить новый акт на WServer.
+        Добавить новый акт на WServer.k
 
         :param auto_id: ID автомобиля
         :param gross: Вес-брутто
@@ -147,7 +147,7 @@ class WServer:
           :return:
               В случае успеха:
                   {'status': True, 'info': *id: int*)
-              В случае провала:
+              В случае провала:Отп
                   {'status': False, 'info': Python Traceback}
           """
         return methods.set_trash_cat(self.sql_shell, name, polygon, active)
