@@ -178,8 +178,8 @@ class WServer(Wsqluse):
             В случае провала:
                 {'status': False, 'info': Python Traceback}
         """
-        return methods.set_trash_type(self, name, category, polygon,
-                                      active)
+        return methods.set_trash_type(self, name=name, polygon=polygon,
+                                      trash_cat_id=category, active=active)
 
     def set_operator(self, full_name: str, login: str, password: str,
                      polygon: int, active: bool = True, *args, **kwargs):
