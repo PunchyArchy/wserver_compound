@@ -32,7 +32,8 @@ class WServer(Wsqluse):
                        'set_photos': {'method': self.set_photos},
                        'set_notes': {'method': self.add_operator_notes},
                        'set_company': {'method': self.set_company},
-                       'get_auto_id': {'method': self.get_auto_id}
+                       'get_auto_id': {'method': self.get_auto_id},
+                       'get_company_id': {'method': self.get_company_id}
                        }
         return api_methods
 
@@ -201,3 +202,14 @@ class WServer(Wsqluse):
         :param car_number: Гос.номер авто.
         :return: ID авто. """
         return methods.get_auto_id(self, car_number)
+
+    def get_company_id(self, company_name: str, *args, **kwargs):
+        """
+        Вернуть ID компании по его названию.
+
+        :param company_name: Название компании.
+        :param args:
+        :param kwargs:
+        :return: ID или None
+        """
+        return methods.get_company_id(self, company_name)
