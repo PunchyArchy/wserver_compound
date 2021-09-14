@@ -238,6 +238,7 @@ def update_trash_cat(sql_shell, cat_id, polygon: int = None, new_name=None,
     :param active: Новый статус активности.
     :return:
     """
+    print(locals())
     if active is False:
         return functions.set_record_unactive(sql_shell, 'trash_cats', cat_id)
     mask = "active={},".format(active)
