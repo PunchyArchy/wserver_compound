@@ -37,6 +37,7 @@ class WServer(Wsqluse):
                        'get_auto_id': {'method': self.get_auto_id},
                        'get_company_id': {'method': self.get_company_id},
                        'set_operator': {'method': self.set_operator},
+                       'update_operator': {'method': self.update_operator},
                        'set_trash_cat': {'method': self.set_trash_cat},
                        'update_trash_cat': {'method': self.update_trash_cat},
                        'set_trash_type': {'method': self.set_trash_type},
