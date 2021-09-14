@@ -242,7 +242,7 @@ def update_trash_cat(sql_shell, cat_id, polygon: int, new_name=None,
         return functions.set_record_unactive(sql_shell, 'trash_cats', cat_id)
     mask = ""
     if new_name:
-        mask = "name='{}',".format(new_name)
+        mask += "name='{}',".format(new_name)
     if polygon:
         mask += "polygon={},".format(polygon)
     return functions.operate_mask(sql_shell, mask, 'trash_cats', cat_id)
