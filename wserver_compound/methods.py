@@ -275,8 +275,9 @@ def set_trash_type(sql_shell, name: str, polygon: int,
 
 
 @functions.format_wsqluse_response
-def update_trash_type(sql_shell, type_id: int, polygon: int, new_name: str,
-                      new_cat_id: int, active: bool = True):
+def update_trash_type(sql_shell, type_id: int, polygon: int = None,
+                      new_name: str = None, new_cat_id: int = None,
+                      active: bool = True):
     """
     Обновить существующий вид груза.
 

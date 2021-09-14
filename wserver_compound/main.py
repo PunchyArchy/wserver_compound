@@ -218,8 +218,9 @@ class WServer(Wsqluse):
         return methods.set_trash_type(self, name=name, polygon=polygon,
                                       trash_cat_id=category, active=active)
 
-    def update_trash_type(self, type_id: int, polygon: int, new_name: str,
-                          new_cat_id: int, active: bool = True,
+    def update_trash_type(self, type_id: int, polygon: int = None,
+                          new_name: str = None, new_cat_id: int = None,
+                          active: bool = True,
                           *args, **kwargs):
         """
         Обновить существующий вид груза.
