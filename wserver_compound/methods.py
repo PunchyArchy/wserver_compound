@@ -48,13 +48,13 @@ def update_auto(sql_shell, auto_id: int, new_car_number=None,
     mask = "active={},".format(active)
     if new_car_number is not None:
         mask += "car_number='{}',".format(new_car_number)
-    if new_id_type:
+    if new_id_type is not None:
         mask += "id_type='{}',".format(new_id_type)
-    if new_rg_weight:
+    if new_rg_weight is not None:
         mask += "rg_weight={},".format(new_rg_weight)
-    if new_model:
+    if new_model is not None:
         mask += "auto_model={},".format(new_model)
-    if new_rfid_id:
+    if new_rfid_id is not None:
         mask += "rfid_id={},".format(new_rfid_id)
     return functions.operate_mask(sql_shell, mask, 'auto', auto_id)
 
@@ -281,11 +281,11 @@ def update_trash_type(sql_shell, type_id: int, polygon: int = None,
     :return:
     """
     mask = "active={},".format(active)
-    if new_name:
+    if new_name is not None:
         mask += "name='{}',".format(new_name)
-    if polygon:
+    if polygon is not None:
         mask += "polygon={},".format(polygon)
-    if new_cat_id:
+    if new_cat_id is not None:
         mask += "category={},".format(new_cat_id)
     return functions.operate_mask(sql_shell, mask, 'trash_types', type_id)
 
