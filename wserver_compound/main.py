@@ -33,6 +33,7 @@ class WServer(Wsqluse):
                        'set_photos': {'method': self.set_photos},
                        'set_notes': {'method': self.add_operator_notes},
                        'set_company': {'method': self.set_company},
+                       'update_company': {'method': self.update_company},
                        'get_auto_id': {'method': self.get_auto_id},
                        'get_company_id': {'method': self.get_company_id},
                        'set_operator': {'method': self.set_operator},
