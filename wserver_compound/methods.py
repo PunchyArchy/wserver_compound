@@ -45,10 +45,6 @@ def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
 def update_auto(sql_shell, auto_id: int, new_car_number=None,
                 new_id_type: str = None, new_rg_weight: int = 0,
                 new_model: int = 0, new_rfid_id: int = None, active=True):
-    if not active:
-        command = "UPDATE auto SET active=False WHERE id={}"
-        command = command.format(auto_id)
-        return sql_shell.update_record(command)
     mask = "active={},".format(active)
     if new_car_number is not None:
         mask += "car_number='{}',".format(new_car_number)
@@ -182,9 +178,6 @@ def set_company(sql_shell, name: str, inn: str, kpp: str,
 def update_company(sql_shell, company_id, name: str = None, inn: str = None,
                    kpp: str = None, polygon: int = None, status: bool = None,
                    ex_id: str = None, active: bool = True):
-    if not active:
-        return functions.set_record_unactive(sql_shell, 'companies',
-                                             company_id)
     mask = "active={},".format(active)
     if name:
         mask += "name='{}',".format(name)
@@ -287,9 +280,6 @@ def update_trash_type(sql_shell, type_id: int, polygon: int = None,
     :param active: Оставить запись активной?
     :return:
     """
-    if not active:
-        return functions.set_record_unactive(sql_shell, 'trash_types',
-                                             type_id)
     mask = "active={},".format(active)
     if new_name:
         mask += "name='{}',".format(new_name)
@@ -343,9 +333,6 @@ def update_operator(sql_shell, operator_id: int, full_name: str = None,
     :param active: Активность.
     :return:
     """
-    if not active:
-        return functions.set_record_unactive(sql_shell, 'operators',
-                                             operator_id)
     mask = "active={},".format(active)
     if full_name:
         mask += "full_name='{}',".format(full_name)
