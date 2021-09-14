@@ -49,7 +49,7 @@ def update_auto(sql_shell, auto_id: int, new_car_number=None,
         command = "UPDATE auto SET active=False WHERE id={}"
         command = command.format(auto_id)
         return sql_shell.update_record(command)
-    mask = ""
+    mask = "active={},".format(active)
     if new_car_number:
         mask += "car_number='{}',".format(new_car_number)
     if new_id_type:
@@ -185,7 +185,7 @@ def update_company(sql_shell, company_id, name: str = None, inn: str = None,
     if not active:
         return functions.set_record_unactive(sql_shell, 'companies',
                                              company_id)
-    mask = ""
+    mask = "active={},".format(active)
     if name:
         mask += "name='{}',".format(name)
     if inn:
@@ -240,7 +240,7 @@ def update_trash_cat(sql_shell, cat_id, polygon: int = None, new_name=None,
     """
     if not active:
         return functions.set_record_unactive(sql_shell, 'trash_cats', cat_id)
-    mask = ""
+    mask = "active={},".format(active)
     if new_name:
         mask += "name='{}',".format(new_name)
     if polygon:
@@ -292,7 +292,7 @@ def update_trash_type(sql_shell, type_id: int, polygon: int = None,
     if not active:
         return functions.set_record_unactive(sql_shell, 'trash_types',
                                              type_id)
-    mask = ""
+    mask = "active={},".format(active)
     if new_name:
         mask += "name='{}',".format(new_name)
     if polygon:
@@ -348,7 +348,7 @@ def update_operator(sql_shell, operator_id: int, full_name: str = None,
     if not active:
         return functions.set_record_unactive(sql_shell, 'operators',
                                              operator_id)
-    mask = ""
+    mask = "active={},".format(active)
     if full_name:
         mask += "full_name='{}',".format(full_name)
     if login:
