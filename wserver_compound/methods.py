@@ -50,7 +50,7 @@ def update_auto(sql_shell, auto_id: int, new_car_number=None,
         command = command.format(auto_id)
         return sql_shell.update_record(command)
     mask = "active={},".format(active)
-    if new_car_number:
+    if new_car_number is not None:
         mask += "car_number='{}',".format(new_car_number)
     if new_id_type:
         mask += "id_type='{}',".format(new_id_type)
@@ -238,12 +238,12 @@ def update_trash_cat(sql_shell, cat_id, polygon: int = None, new_name=None,
     :param active: Новый статус активности.
     :return:
     """
-    if not active:
+    if active is False:
         return functions.set_record_unactive(sql_shell, 'trash_cats', cat_id)
     mask = "active={},".format(active)
-    if new_name:
+    if new_name is not None:
         mask += "name='{}',".format(new_name)
-    if polygon:
+    if polygon is not None:
         mask += "polygon={},".format(polygon)
     return functions.operate_mask(sql_shell, mask, 'trash_cats', cat_id)
 
@@ -358,7 +358,6 @@ def update_operator(sql_shell, operator_id: int, full_name: str = None,
     if polygon:
         mask += "polygon='{}',".format(polygon)
     return functions.operate_mask(sql_shell, mask, 'operators', operator_id)
-
 
 
 @functions.format_wsqluse_response
