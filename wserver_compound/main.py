@@ -164,7 +164,7 @@ class WServer(Wsqluse):
     def update_company(self, company_id, name: str = None, inn: str = None,
                        kpp: str = None, polygon: int = None,
                        status: bool = None,
-                       ex_id: str = None, active: bool = True):
+                       ex_id: str = None, active: bool = True, *args, **kwargs):
         return methods.update_company(self, company_id, name, inn, kpp,
                                       polygon, status, ex_id, active)
 
