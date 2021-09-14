@@ -37,6 +37,24 @@ def format_wsqluse_response(func):
     return wrapper
 
 
+def operate_mask(sql_shell, mask: str, table_name: str, record_id: int):
+    """
+    Обрабатывает получившуюся маску.
+
+    :param sql_shell: Объект типа WSQluse для работы с БД.
+    :param mask: Маска ("name='some', foo='bar'" или же просто "")
+    :param table_name: Имя таблицы.
+    :param record_id: ID записи, которую надо менять согласно маске.
+    :return:
+    """
+    if not mask:
+        return {'status': 'failed', 'info': 'Укажите, что изменить.'}
+    mask = mask[:-1]
+    command = "UPDATE {} SET {} WHERE id={}".format(table_name, mask,
+                                                    record_id)
+    return sql_shell.update_record(command)
+
+
 def format_act_time(time, time_mask='%Y.%m.%d %H:%M:%S'):
     """ Получает дату-время, в виде строки, конвертирует его в объект
         datetime.datetime и возвращает результат.
@@ -135,7 +153,9 @@ def send_data_to_core(data_type):
                     response = wta.deliver(wserver_id=response['info'][0][0],
                                            **all_args)
             return response
+
         return wrapper
+
     return decorator
 
 
@@ -167,3 +187,16 @@ def collect_args(func, *args, **kwargs):
     all_args.update(default_values)
     return all_args
 
+
+def set_record_unactive(sql_shell, table_name, record_id, active=False):
+    """
+    Сделать запись неактивной. (Выставить значение поля column=False).
+
+    :param sql_shell: Экземлпяр класса WSQluse для работы с БД.
+    :param table_name: имя таблицы.
+    :param record_id: ID записи.
+    :return:
+    """
+    command = "UPDATE {} SET active={} WHERE id={}"
+    command = command.format(table_name, active, record_id)
+    return sql_shell.try_execute(command)

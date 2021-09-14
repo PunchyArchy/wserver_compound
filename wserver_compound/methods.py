@@ -2,6 +2,7 @@
  ВАЖНО! Здесь находятся именно features WServer, его основной функционал методов,
  а в модуле functions, находятся небольшие функции, которые необходимы для
  выполнения функционала, изложенного здесь."""
+import wsqluse.wsqluse
 
 from wserver_compound import functions
 
@@ -38,6 +39,28 @@ def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
     values = (car_number, id_type, rg_weight, model, polygon, rfid_id)
     response = sql_shell.try_execute_double(command, values)
     return response
+
+
+@functions.format_wsqluse_response
+def update_auto(sql_shell, auto_id: int, new_car_number=None,
+                new_id_type: str = None, new_rg_weight: int = 0,
+                new_model: int = 0, new_rfid_id: int = None, active=True):
+    if not active:
+        command = "UPDATE auto SET active=False WHERE id={}"
+        command = command.format(auto_id)
+        return sql_shell.update_record(command)
+    mask = ""
+    if new_car_number:
+        mask += "car_number='{}',".format(new_car_number)
+    if new_id_type:
+        mask += "id_type='{}',".format(new_id_type)
+    if new_rg_weight:
+        mask += "rg_weight={},".format(new_rg_weight)
+    if new_model:
+        mask += "auto_model={},".format(new_model)
+    if new_rfid_id:
+        mask += "rfid_id={},".format(new_rfid_id)
+    return functions.operate_mask(sql_shell, mask, 'auto', auto_id)
 
 
 @functions.format_wsqluse_response
@@ -155,6 +178,29 @@ def set_company(sql_shell, name: str, inn: str, kpp: str,
     return response
 
 
+@functions.format_wsqluse_response
+def update_company(sql_shell, company_id, name: str = None, inn: str = None,
+                   kpp: str = None, polygon: int = None, status: bool = None,
+                   ex_id: str = None, active: bool = True):
+    if not active:
+        return functions.set_record_unactive(sql_shell, 'companies',
+                                             company_id)
+    mask = ""
+    if name:
+        mask += "name='{}',".format(name)
+    if inn:
+        mask += "inn='{}',".format(inn)
+    if kpp:
+        mask += "kpp='{}',".format(kpp)
+    if polygon:
+        mask += "polygon='{}',".format(polygon)
+    if status:
+        mask += "status='{}',".format(status)
+    if ex_id:
+        mask += "mask='{}',".format(ex_id)
+    return functions.operate_mask(sql_shell, mask, 'companies', company_id)
+
+
 @functions.send_data_to_core('trash_cats')
 @functions.format_wsqluse_response
 def set_trash_cat(sql_shell, name, polygon, active=True):
@@ -177,6 +223,25 @@ def set_trash_cat(sql_shell, name, polygon, active=True):
     values = (name, polygon, active)
     response = sql_shell.try_execute_double(command, values)
     return response
+
+
+@functions.format_wsqluse_response
+def update_trash_cat(sql_shell, cat_id, new_name=None, active=True):
+    """
+    Обновить категорию груза.
+
+    :param sql_shell: Объект WSQLuse, для взаимодействия с GDB.
+    :param cat_id: ID записи.
+    :param new_name: Новое имя категории груза.
+    :param active: Новый статус активности.
+    :return:
+    """
+    if not active:
+        return functions.set_record_unactive(sql_shell, 'trash_cats', cat_id)
+    mask = ""
+    if new_name:
+        mask = "name='{}',".format(new_name)
+    return functions.operate_mask(sql_shell, mask, 'trash_cats', cat_id)
 
 
 @functions.send_data_to_core('trash_types')
@@ -205,6 +270,33 @@ def set_trash_type(sql_shell, name: str, polygon: int,
     return response
 
 
+@functions.format_wsqluse_response
+def update_trash_type(sql_shell, type_id: int, polygon: int, new_name: str,
+                      new_cat_id: int, active: bool = True):
+    """
+    Обновить существующий вид груза.
+
+    :param sql_shell: Объект WSQLuse, для взаимодействия с GDB.
+    :param type_id: ID вида груза.
+    :param polygon: Полигон, вид груза которого меняется.
+    :param new_name: Новое название вида груза.
+    :param new_cat_id: Новая категория для груза.
+    :param active: Оставить запись активной?
+    :return:
+    """
+    if not active:
+        return functions.set_record_unactive(sql_shell, 'trash_types',
+                                             type_id)
+    mask = ""
+    if new_name:
+        mask += "name='{}',".format(new_name)
+    if polygon:
+        mask += "polygon={},".format(polygon)
+    if new_cat_id:
+        mask += "category={},".format(new_cat_id)
+    return functions.operate_mask(sql_shell, mask, 'trash_types', type_id)
+
+
 @functions.send_data_to_core('users')
 @functions.format_wsqluse_response
 def set_operator(sql_shell, full_name: str, login: str, password: str,
@@ -230,6 +322,38 @@ def set_operator(sql_shell, full_name: str, login: str, password: str,
     values = (full_name, login, password, polygon, active)
     response = sql_shell.try_execute_double(command, values)
     return response
+
+
+@functions.format_wsqluse_response
+def update_operator(sql_shell, operator_id: int, full_name: str = None,
+                    login: str = None, password: str = None,
+                    polygon: int = None, active: bool = True):
+    """
+    Обновить информацию о весовщике.
+
+    :param operator_id: ID весовщика.
+    :param sql_shell: Объект WSQLuse, для взаимодействия с GDB.
+    :param full_name: Полное имя.
+    :param login: Логин.
+    :param password: Пароль.
+    :param polygon: Полигон, за которым закреплен весовщик.
+    :param active: Активность.
+    :return:
+    """
+    if not active:
+        return functions.set_record_unactive(sql_shell, 'operators',
+                                             operator_id)
+    mask = ""
+    if full_name:
+        mask += "full_name='{}',".format(full_name)
+    if login:
+        mask += "full_name='{}',".format(login)
+    if password:
+        mask += "password='{}',".format(password)
+    if polygon:
+        mask += "polygon='{}',".format(polygon)
+    return functions.operate_mask(sql_shell, mask, 'operators', operator_id)
+
 
 
 @functions.format_wsqluse_response
@@ -311,3 +435,18 @@ def get_company_id(sql_shell, company_name: str):
     response = sql_shell.try_execute_get(command)
     if response:
         return response[0][0]
+
+
+@wsqluse.wsqluse.getTableDictStripper
+def get_record_info(sql_shell, record_id: int, table_name: str):
+    """
+    Вернуть всю информацию по записи в виде соваря {поле:значение} из
+    указанной таблицы.
+
+    :param sql_shell: Экземпляр wsqluse для работы с GDB.
+    :param record_id: ID записи.
+    :param table_name: Имя таблицы.
+    :return:
+    """
+    command = "SELECT * FROM {} WHERE id={}".format(table_name, record_id)
+    return sql_shell.get_table_dict(command)

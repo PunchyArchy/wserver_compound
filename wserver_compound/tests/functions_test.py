@@ -55,7 +55,9 @@ class FunctionsTest(unittest.TestCase):
         response = functions.get_all_polygon_ids(test_objects.test_sql_shell)
         print(response)
 
-
+    def test_set_record_unactive(self):
+        response = functions.set_record_unactive(test_objects.test_sql_shell,
+                                                 'auto', 572159, active=True)
 
 if __name__ == '__main__':
     unittest.main()
