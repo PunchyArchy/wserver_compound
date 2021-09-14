@@ -226,7 +226,7 @@ def set_trash_cat(sql_shell, name, polygon, active=True):
 
 
 @functions.format_wsqluse_response
-def update_trash_cat(sql_shell, cat_id, polygon: int, new_name=None,
+def update_trash_cat(sql_shell, cat_id, polygon: int = None, new_name=None,
                      active=True):
     """
     Обновить категорию груза.

@@ -182,21 +182,23 @@ class WServer(Wsqluse):
           """
         return methods.set_trash_cat(self, name, polygon, active)
 
-    def update_trash_cat(self, cat_id, polygon, new_name=None, active=True,
-                         *args, **kwargs):
+    def update_trash_cat(self, cat_id, polygon=None, new_name=None,
+                         active=True, *args, **kwargs):
         """
         Обновить категорию груза.
 
         :param new_name: Новое имя категории груза.
-        :param active: ID полигона, для которого вносятся изменения.
+        :param polygon: ID полигона, для которого вносятся изменения.
         :param cat_id: ID категории груза, который нужно изменить.
+        :param active: Активность записи.
         :return:
               В случае успеха:
                   {'status': True, 'info': *id: int*)
               В случае провала:Отп
                   {'status': False, 'info': Python Traceback}
         """
-        return methods.update_trash_cat(self, cat_id, polygon, new_name, active)
+        return methods.update_trash_cat(self, cat_id, polygon, new_name,
+                                        active)
 
     def set_trash_type(self, name: str, polygon: int, category: int = None,
                        active: bool = True, *args, **kwargs):
@@ -222,7 +224,6 @@ class WServer(Wsqluse):
         """
         Обновить существующий вид груза.
 
-        :param sql_shell: Объект WSQLuse, для взаимодействия с GDB.
         :param type_id: ID вида груза.
         :param polygon: Полигон, вид груза которого меняется.
         :param new_name: Новое название вида груза.
