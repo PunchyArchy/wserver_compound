@@ -99,7 +99,8 @@ class WServer(Wsqluse):
 
     def update_auto(self, auto_id: int, new_car_number=None,
                     new_id_type: str = None, new_rg_weight: int = 0,
-                    new_model: int = 0, new_rfid_id: int = None, active=True):
+                    new_model: int = 0, new_rfid_id: int = None, active=True,
+                    *args, **kwargs):
         return methods.update_auto(self, auto_id, new_car_number,
                                    new_id_type, new_rg_weight,
                                    new_model, new_rfid_id, active)
@@ -181,21 +182,21 @@ class WServer(Wsqluse):
           """
         return methods.set_trash_cat(self, name, polygon, active)
 
-    def update_trash_cat(self, name, polygon, new_name=None, active=True,
+    def update_trash_cat(self, cat_id, polygon, new_name=None, active=True,
                          *args, **kwargs):
         """
         Обновить категорию груза.
 
         :param new_name: Новое имя категории груза.
-        :param active: ID полигона, для которого вносятся изменения
-        :param name: Старое имя категории груза.
+        :param active: ID полигона, для которого вносятся изменения.
+        :param cat_id: ID категории груза, который нужно изменить.
         :return:
               В случае успеха:
                   {'status': True, 'info': *id: int*)
               В случае провала:Отп
                   {'status': False, 'info': Python Traceback}
         """
-        return methods.update_trash_cat(self, name, polygon, new_name, active)
+        return methods.update_trash_cat(self, cat_id, polygon, new_name, active)
 
     def set_trash_type(self, name: str, polygon: int, category: int = None,
                        active: bool = True, *args, **kwargs):
@@ -216,7 +217,8 @@ class WServer(Wsqluse):
                                       trash_cat_id=category, active=active)
 
     def update_trash_type(self, type_id: int, polygon: int, new_name: str,
-                          new_cat_id: int, active: bool = True):
+                          new_cat_id: int, active: bool = True,
+                          *args, **kwargs):
         """
         Обновить существующий вид груза.
 
@@ -252,7 +254,8 @@ class WServer(Wsqluse):
 
     def update_operator(self, operator_id: int, full_name: str = None,
                         login: str = None, password: str = None,
-                        polygon: int = None, active: bool = True):
+                        polygon: int = None, active: bool = True,
+                        *args, **kwargs):
         """
         Обновить информацию о весовщике.
 

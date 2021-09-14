@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 setup(
     name='wserver_compound',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(),
     author='PunchyArchy',
     author_email='ksmdrmvscthny@gmail.com',

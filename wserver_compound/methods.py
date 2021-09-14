@@ -226,12 +226,14 @@ def set_trash_cat(sql_shell, name, polygon, active=True):
 
 
 @functions.format_wsqluse_response
-def update_trash_cat(sql_shell, cat_id, new_name=None, active=True):
+def update_trash_cat(sql_shell, cat_id, polygon: int, new_name=None,
+                     active=True):
     """
     Обновить категорию груза.
 
     :param sql_shell: Объект WSQLuse, для взаимодействия с GDB.
     :param cat_id: ID записи.
+    :param polygon: ID полигона.
     :param new_name: Новое имя категории груза.
     :param active: Новый статус активности.
     :return:
@@ -241,6 +243,8 @@ def update_trash_cat(sql_shell, cat_id, new_name=None, active=True):
     mask = ""
     if new_name:
         mask = "name='{}',".format(new_name)
+    if polygon:
+        mask += "polygon={},".format(polygon)
     return functions.operate_mask(sql_shell, mask, 'trash_cats', cat_id)
 
 
