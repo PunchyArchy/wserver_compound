@@ -136,21 +136,24 @@ def send_data_to_core(data_type):
         данные в QPI GCore.
     :return:
     """
-
+    print(locals())
     def decorator(func):
         def wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
-            if response['status'] == 'success':
+            print(response)
+            if response['status']:
                 all_args = collect_args(func, *args, **kwargs)
                 polygon = all_args['polygon']
+                # Если полигон не указан, отправить данные по всем
                 if not polygon:
                     all_polygons = get_all_polygon_ids(all_args['sql_shell'])
                 else:
                     all_polygons = [polygon]
                 for polygon in all_polygons:
-                    wta = WTA(data_type, 'gdb', 'watchman', 'hect0r1337',
-                              '192.168.100.118', polygon)
-                    response = wta.deliver(wserver_id=response['info'][0][0],
+                    wta = WTA(data_type, args[0].dbname, args[0].user,
+                              args[0].password, args[0].host, polygon)
+                    print(response)
+                    response = wta.deliver(wserver_id=response['info'],
                                            **all_args)
             return response
 

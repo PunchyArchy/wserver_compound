@@ -7,6 +7,7 @@ from qdk.main import QDK
 
 class ApiTest(unittest.TestCase):
     """ Тестовый класс """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.wserver = WServer(9996, dbname='gdb', user='watchman',
@@ -23,22 +24,18 @@ class ApiTest(unittest.TestCase):
 
     def test_add_act(self):
         """ Тестируем добавление акта """
-        self.qdk.execute_method('add_act', auto_id=None, gross=9000, tare=8000,
-                                    cargo=1000,
-                                    time_in='2021.08.24 23:31',
-                                    time_out='2021.09.25 13:44:12',
-                                    carrier_id=None,
-                                    trash_cat_id=None, trash_type_id=None,
-                                    polygon_id=None, operator=None, ex_id=1338)
+        self.qdk.execute_method('set_act', auto_id=663547, gross=9000, tare=8000,
+                                cargo=1000,
+                                time_in='2021.08.24 23:31',
+                                time_out='2021.09.25 13:44:12',
+                                carrier_id=None,
+                                trash_cat_id=None, trash_type_id=None,
+                                polygon_id=9, operator=None, ex_id=1338)
         response = self.qdk.get_data()
+        print("ADD ACT RESPONSE:", response)
+        print(type(response['info']['info']), response['info']['info'])
         self.assertTrue(response['status'] and
-                        response['core_method'] == 'add_act' and
-                        isinstance(response['info'], int))
-
-    def test_some(self):
-        self.qdk.execute_method('test_some')
-        response = self.qdk.get_data()
-        print("RESP", response)
+                        response['core_method'] == 'set_act')
 
 
 if __name__ == "__main__":

@@ -20,15 +20,7 @@ class FunctionsTest(unittest.TestCase):
                                             id_type='rfid',
                                             rg_weight=0,
                                             rfid='SAF')
-
         self.assertTrue(response_success['status'])
-        response_fail = methods.set_auto(test_sql_shell,
-                                         car_number=car_number,
-                                         polygon=9,
-                                         id_type='rfid',
-                                         rg_weight=0,
-                                         rfid='SAF')
-        self.assertTrue(not response_fail['status'])
         methods.delete_record(test_sql_shell, 'id',
                               response_success['info'],
                               'auto')
@@ -120,12 +112,12 @@ class FunctionsTest(unittest.TestCase):
 
     def test_update_trash_cat(self):
         response = methods.update_trash_cat(test_sql_shell,
-                                            old_name='TEST_CAT_2',
+                                            cat_id=35,
                                             polygon=9, new_name='TEST_CAT_2')
         self.assertTrue(response['status'] and
                         isinstance(response['info'], int))
         response = methods.update_trash_cat(test_sql_shell,
-                                            old_name='TEST_CAT_00000',
+                                            cat_id=0,
                                             polygon=9, new_name='TEST_CAT_001')
         self.assertTrue(not response['status'] and
                         response['info'] == 'Не найдена запись на изменение!')
@@ -150,6 +142,7 @@ class FunctionsTest(unittest.TestCase):
     def test_get_company_id(self):
         company_name = 'test_company_1'
         response = methods.get_company_id(test_sql_shell, company_name)
+        print("GET COMPANY RESPONSE", response)
         self.assertTrue(isinstance(response, int))
 
     def test_get_rfid(self):
@@ -159,27 +152,29 @@ class FunctionsTest(unittest.TestCase):
                                        'a00240sf')
         self.assertTrue(not res_fail)
 
-
     def test_update_auto(self):
-        response = methods.update_auto(test_sql_shell, car_number='В666ХА706',
+        response = methods.update_auto(test_sql_shell, auto_id=575703,
                                        new_car_number='В060ХА706',
                                        new_id_type='some_new',
                                        new_rfid_id=None, active=True)
-        print(response)
-        response = methods.update_auto(test_sql_shell, car_number='В060ХА706',
-                                       active=False)
-        print(response)
+        self.assertTrue(response['status'] and isinstance(response['info'],
+                                                          int))
+        response = methods.update_auto(test_sql_shell, auto_id=575703,
+                                       active=True)
+        self.assertTrue(response['status'] and isinstance(response['info'],
+                                                          int))
 
     def test_update_company(self, company_id=507970):
         company_info = methods.get_record_info(test_sql_shell, company_id,
                                                'companies')
         if company_info:
             company_info = company_info[0]
-
-        print(company_info)
+        self.assertTrue(isinstance(company_info, dict)
+                        and 'inn' in company_info.keys())
         response = methods.update_company(test_sql_shell, company_id=company_id,
-                                          name='test_company_2')
-        print(response)
+                                          name='test_company_1')
+        self.assertTrue(response['status'] and isinstance(response['info'],
+                                                          int))
 
     def test_get_record_info(self):
         response = methods.get_record_info(test_sql_shell, 507970, 'companies')
@@ -189,6 +184,9 @@ class FunctionsTest(unittest.TestCase):
 
     def test_update_operator(self):
         response = methods.update_operator(test_sql_shell, 22)
-        print(response)
+        self.assertTrue(response['status'] and isinstance(response['info'],
+                                                          int))
+
+
 if __name__ == '__main__':
     unittest.main()

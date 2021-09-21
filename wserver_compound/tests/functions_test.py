@@ -53,11 +53,14 @@ class FunctionsTest(unittest.TestCase):
 
     def test_get_all_polygon_ids(self):
         response = functions.get_all_polygon_ids(test_objects.test_sql_shell)
-        print(response)
+        self.assertTrue(isinstance(response, list))
 
     def test_set_record_unactive(self):
         response = functions.set_record_unactive(test_objects.test_sql_shell,
                                                  'auto', 572159, active=True)
+        self.assertTrue(response['status'] == 'success' and
+                        isinstance(response['info'][0][0], int))
+
 
 if __name__ == '__main__':
     unittest.main()
