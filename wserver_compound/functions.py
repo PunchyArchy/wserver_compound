@@ -140,7 +140,6 @@ def send_data_to_core(data_type):
     def decorator(func):
         def wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
-            print(response)
             if response['status']:
                 all_args = collect_args(func, *args, **kwargs)
                 polygon = all_args['polygon']
