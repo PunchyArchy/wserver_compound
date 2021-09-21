@@ -136,7 +136,6 @@ def send_data_to_core(data_type):
         данные в QPI GCore.
     :return:
     """
-    print(locals())
     def decorator(func):
         def wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
