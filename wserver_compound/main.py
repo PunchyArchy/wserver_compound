@@ -304,7 +304,7 @@ class WServer(Wsqluse):
         """
         return methods.get_rfid_id(self, rfid=rfid)
 
-    def set_alerts(self, wserver_id: int, alerts: str):
+    def set_alerts(self, wserver_id: int, alerts: str, **kwargs):
         """
         Принимает alert от AR.
         :param wserver_id: идентификатор сервера
