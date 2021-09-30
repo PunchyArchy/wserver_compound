@@ -42,7 +42,8 @@ class WServer(Wsqluse):
                        'update_trash_cat': {'method': self.update_trash_cat},
                        'set_trash_type': {'method': self.set_trash_type},
                        'update_trash_type': {'method': self.update_trash_type},
-                       'get_rfid_id': {'method': self.get_rfid_id}
+                       'get_rfid_id': {'method': self.get_rfid_id},
+                       'set_alerts': {'method': self.set_alerts}
                        }
         return api_methods
 
@@ -306,8 +307,8 @@ class WServer(Wsqluse):
     def set_alerts(self, wserver_id: int, alerts: str):
         """
         Принимает alert от AR.
-        :param: wserver_id идентификатор сервера
-        :param: alerts текст alert
+        :param wserver_id: идентификатор сервера
+        :param alerts: текст alert
         :return: возвращает текст alert
         """
         return methods.set_alerts(sql_shell=self, wserver_id=wserver_id, alerts=alerts)
