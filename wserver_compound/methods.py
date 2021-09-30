@@ -439,3 +439,14 @@ def get_record_info(sql_shell, record_id: int, table_name: str):
     """
     command = "SELECT * FROM {} WHERE id={}".format(table_name, record_id)
     return sql_shell.get_table_dict(command)
+
+
+@functions.format_wsqluse_response
+def set_alerts(sql_shell, wserver_id: int, alerts: str):
+    command = """INSERT INTO alerts
+                (record, alerts)
+                VALUES (%s, %s)"""
+    values = (wserver_id, alerts)
+    response = sql_shell.try_execute_double(command, values)
+    return response
+

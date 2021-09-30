@@ -187,6 +187,9 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(response['status'] and isinstance(response['info'],
                                                           int))
 
+    def test_set_alerts(self):
+        response = methods.set_alerts(test_sql_shell, 784719, 'huy')
+        print(response)
 
 if __name__ == '__main__':
     unittest.main()
