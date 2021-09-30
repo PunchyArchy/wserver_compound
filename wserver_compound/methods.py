@@ -7,7 +7,7 @@ import wsqluse.wsqluse
 from wserver_compound import functions
 
 
-@functions.send_data_to_core('auto')
+@functions.send_data_to_core('auto', 'auto')
 @functions.format_wsqluse_response
 def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
              rg_weight: int = 0, model: int = 0, rfid: str = None,
@@ -41,10 +41,12 @@ def set_auto(sql_shell, car_number: str, polygon: int, id_type: str,
     return response
 
 
+@functions.send_data_to_core('auto_upd', 'auto')
 @functions.format_wsqluse_response
 def update_auto(sql_shell, auto_id: int, new_car_number=None,
                 new_id_type: str = None, new_rg_weight: int = 0,
-                new_model: int = 0, new_rfid_id: int = None, active=True):
+                new_model: int = 0, new_rfid_id: int = None, active=True,
+                **kwargs):
     mask = "active={},".format(active)
     if new_car_number is not None:
         mask += "car_number='{}',".format(new_car_number)
@@ -94,6 +96,7 @@ def set_act(sql_shell, auto_id: int, gross: int, tare: int, cargo: int,
     values = (auto_id, gross, tare, cargo, time_in, time_out, carrier_id,
               trash_cat_id, trash_type_id, polygon_id, operator, ex_id)
     response = sql_shell.try_execute_double(command, values)
+    fix_act_asc(sql_shell, polygon_id, response['info'][0][0])
     return response
 
 
@@ -145,6 +148,7 @@ def add_operator_notes(sql_shell, record, note, note_type):
     return response
 
 
+@functions.send_data_to_core('companies', 'companies')
 @functions.format_wsqluse_response
 def set_company(sql_shell, name: str, inn: str, kpp: str,
                 polygon: int, status: bool = True, ex_id: str = None,
@@ -174,6 +178,7 @@ def set_company(sql_shell, name: str, inn: str, kpp: str,
     return response
 
 
+@functions.send_data_to_core('companies_upd', 'companies')
 @functions.format_wsqluse_response
 def update_company(sql_shell, company_id, name: str = None, inn: str = None,
                    kpp: str = None, polygon: int = None, status: bool = None,
@@ -191,10 +196,11 @@ def update_company(sql_shell, company_id, name: str = None, inn: str = None,
         mask += "status='{}',".format(status)
     if ex_id:
         mask += "mask='{}',".format(ex_id)
-    return functions.operate_mask(sql_shell, mask, 'companies', company_id)
+    return functions.operate_mask(sql_shell, mask, 'companies',
+                                  company_id)
 
 
-@functions.send_data_to_core('trash_cats')
+@functions.send_data_to_core('trash_cats', 'trash_cats')
 @functions.format_wsqluse_response
 def set_trash_cat(sql_shell, name, polygon, active=True):
     """
@@ -218,6 +224,7 @@ def set_trash_cat(sql_shell, name, polygon, active=True):
     return response
 
 
+@functions.send_data_to_core('trash_cats_upd', 'trash_cats')
 @functions.format_wsqluse_response
 def update_trash_cat(sql_shell, cat_id, polygon: int = None, new_name=None,
                      active=True):
@@ -239,7 +246,7 @@ def update_trash_cat(sql_shell, cat_id, polygon: int = None, new_name=None,
     return functions.operate_mask(sql_shell, mask, 'trash_cats', cat_id)
 
 
-@functions.send_data_to_core('trash_types')
+@functions.send_data_to_core('trash_types', 'trash_types')
 @functions.format_wsqluse_response
 def set_trash_type(sql_shell, name: str, polygon: int,
                    trash_cat_id: int = None, active: bool = True):
@@ -265,6 +272,7 @@ def set_trash_type(sql_shell, name: str, polygon: int,
     return response
 
 
+@functions.send_data_to_core('trash_types_upd', 'trash_types')
 @functions.format_wsqluse_response
 def update_trash_type(sql_shell, type_id: int, polygon: int = None,
                       new_name: str = None, new_cat_id: int = None,
@@ -290,7 +298,7 @@ def update_trash_type(sql_shell, type_id: int, polygon: int = None,
     return functions.operate_mask(sql_shell, mask, 'trash_types', type_id)
 
 
-@functions.send_data_to_core('users')
+@functions.send_data_to_core('users', 'operators')
 @functions.format_wsqluse_response
 def set_operator(sql_shell, full_name: str, login: str, password: str,
                  polygon: int, active: bool = True):
@@ -317,6 +325,7 @@ def set_operator(sql_shell, full_name: str, login: str, password: str,
     return response
 
 
+@functions.send_data_to_core('users_upd', 'operators')
 @functions.format_wsqluse_response
 def update_operator(sql_shell, operator_id: int, full_name: str = None,
                     login: str = None, password: str = None,
@@ -439,3 +448,9 @@ def get_record_info(sql_shell, record_id: int, table_name: str):
     """
     command = "SELECT * FROM {} WHERE id={}".format(table_name, record_id)
     return sql_shell.get_table_dict(command)
+
+
+def fix_act_asc(sql_shell, polygon_id, record_id):
+    functions.set_all_external_systems_act_send_settings(sql_shell,
+                                                         polygon_id,
+                                                         record_id)

@@ -35,8 +35,8 @@ class FunctionsTest(unittest.TestCase):
                                    trash_cat_id=4, trash_type_id=4,
                                    polygon_id=1, operator=22, ex_id=1488)
         self.assertTrue(response['status'] and int(response['info']))
-        methods.delete_record(test_sql_shell, 'id', response['info'],
-                              'records')
+        #methods.delete_record(test_sql_shell, 'id', response['info'],
+        #                      'records')
 
     def test_set_photo(self):
         """ Тесты сохранения фотографии на винте """
@@ -59,8 +59,9 @@ class FunctionsTest(unittest.TestCase):
 
     def test_set_company(self):
         """ Тетстирование добавления новой компании-перевозчика """
-        result = methods.set_company(test_sql_shell, 'TEST_COMPANY', '123',
-                                     9, None, True, None)
+        result = methods.set_company(test_sql_shell, name='TEST_COMPANY_4',
+                                     inn='123', kpp='345', polygon=9,
+                                     status=True, ex_id=None, active=False)
         self.assertTrue(result['status'],
                         isinstance(result['info'], int))
         methods.delete_record(test_sql_shell, 'id', result['info'],
@@ -68,7 +69,7 @@ class FunctionsTest(unittest.TestCase):
 
     def test_set_trash_cat(self):
         """ Тетстирование добавления новой компании-перевозчика """
-        result = methods.set_trash_cat(test_sql_shell, 'TEST_TRASH_CAT',
+        result = methods.set_trash_cat(test_sql_shell, name='TEST_TRASH_CAT',
                                        polygon=9)
         self.assertTrue(result['status'] and
                         isinstance(result['info'], int) or not result[
@@ -78,7 +79,7 @@ class FunctionsTest(unittest.TestCase):
 
     def test_set_trash_type(self):
         """ Тетстирование добавления новой компании-перевозчика """
-        result = methods.set_trash_type(test_sql_shell, 'TEST_TRASH_NAME',
+        result = methods.set_trash_type(test_sql_shell, name='TEST_TRASH_NAME',
                                         trash_cat_id=None,
                                         polygon=9)
         self.assertTrue(result['status'],
@@ -113,21 +114,21 @@ class FunctionsTest(unittest.TestCase):
     def test_update_trash_cat(self):
         response = methods.update_trash_cat(test_sql_shell,
                                             cat_id=35,
-                                            polygon=9, new_name='TEST_CAT_2')
+                                            new_name='TEST_CAT_2')
         self.assertTrue(response['status'] and
                         isinstance(response['info'], int))
         response = methods.update_trash_cat(test_sql_shell,
                                             cat_id=0,
-                                            polygon=9, new_name='TEST_CAT_001')
+                                            new_name='TEST_CAT_001')
         self.assertTrue(not response['status'] and
                         response['info'] == 'Не найдена запись на изменение!')
 
     def test_update_trash_type(self):
-        response = methods.update_trash_type(test_sql_shell,type_id=55,
-                                             polygon=9, new_name='test_type_3',
+        response = methods.update_trash_type(test_sql_shell, type_id=55,
+                                             new_name='test_type_3',
                                              new_cat_id=35)
-        response = methods.update_trash_type(test_sql_shell,type_id=55,
-                                             polygon=9, new_name='test_type_5',
+        response = methods.update_trash_type(test_sql_shell, type_id=55,
+                                             new_name='test_type_5',
                                              new_cat_id=38)
         self.assertTrue(response['status'] and
                         isinstance(response['info'], int))
@@ -153,25 +154,28 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(not res_fail)
 
     def test_update_auto(self):
-        response = methods.update_auto(test_sql_shell, auto_id=575703,
-                                       new_car_number='В060ХА706',
+        response = methods.update_auto(test_sql_shell, auto_id=647285,
+                                       new_car_number='В060ХА709',
                                        new_id_type='some_new',
-                                       new_rfid_id=None, active=True)
+                                       new_rfid_id=None, active=True,
+                                       polygon=0)
         self.assertTrue(response['status'] and isinstance(response['info'],
                                                           int))
-        response = methods.update_auto(test_sql_shell, auto_id=575703,
+        response = methods.update_auto(test_sql_shell, auto_id=647285,
                                        active=True)
         self.assertTrue(response['status'] and isinstance(response['info'],
                                                           int))
 
-    def test_update_company(self, company_id=507970):
+    def test_update_company(self, company_id=508012):
         company_info = methods.get_record_info(test_sql_shell, company_id,
                                                'companies')
         if company_info:
             company_info = company_info[0]
+
         self.assertTrue(isinstance(company_info, dict)
                         and 'inn' in company_info.keys())
-        response = methods.update_company(test_sql_shell, company_id=company_id,
+        response = methods.update_company(test_sql_shell,
+                                          company_id=company_id,
                                           name='test_company_1')
         self.assertTrue(response['status'] and isinstance(response['info'],
                                                           int))
@@ -183,7 +187,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertFalse(response)
 
     def test_update_operator(self):
-        response = methods.update_operator(test_sql_shell, 22)
+        response = methods.update_operator(test_sql_shell, operator_id=162,
+                                           full_name='FIO')
         self.assertTrue(response['status'] and isinstance(response['info'],
                                                           int))
 

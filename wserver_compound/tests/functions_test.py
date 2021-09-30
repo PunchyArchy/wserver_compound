@@ -62,5 +62,15 @@ class FunctionsTest(unittest.TestCase):
                         isinstance(response['info'][0][0], int))
 
 
+    def test_id_converter(self):
+        """
+        Тестирование декоратора, преобразующего wserver_id в ar_id
+        :return:
+        """
+        @functions.id_converter('some_nine', 13)
+        def some_func(a='foo', b='bar'):
+            print('Body', a,b )
+        some_func('gott mit', 'uns')
+
 if __name__ == '__main__':
     unittest.main()
