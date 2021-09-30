@@ -450,6 +450,17 @@ def get_record_info(sql_shell, record_id: int, table_name: str):
     return sql_shell.get_table_dict(command)
 
 
+@functions.format_wsqluse_response
+def set_alerts(sql_shell, wserver_id: int, alerts: str):
+    command = """INSERT INTO alerts
+                (record, alerts)
+                VALUES (%s, %s)"""
+    values = (wserver_id, alerts)
+    response = sql_shell.try_execute_double(command, values)
+    return response
+
+
+
 def fix_act_asc(sql_shell, polygon_id, record_id):
     functions.set_all_external_systems_act_send_settings(sql_shell,
                                                          polygon_id,
