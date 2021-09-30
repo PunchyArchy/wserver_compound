@@ -302,3 +302,12 @@ class WServer(Wsqluse):
         :return: ID или None.
         """
         return methods.get_rfid_id(self, rfid=rfid)
+
+    def set_alerts(self, wserver_id: int, alerts: str):
+        """
+        Принимает alert от AR.
+        :param: wserver_id идентификатор сервера
+        :param: alerts текст alert
+        :return: возвращает текст alert
+        """
+        return methods.set_alerts(sql_shell=self, wserver_id=wserver_id, alerts=alerts)
