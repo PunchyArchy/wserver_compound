@@ -473,3 +473,4 @@ def check_legit(sql_shell, mac_addr: str):
     command = "SELECT active FROM ar_mac_addr WHERE mac_addr='{}'".format(mac_addr)
     response = sql_shell.try_execute_get(command)
     return response
+
