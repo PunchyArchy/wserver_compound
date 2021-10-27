@@ -2,6 +2,7 @@
  ВАЖНО! Здесь находятся именно features WServer, его основной функционал методов,
  а в модуле functions, находятся небольшие функции, которые необходимы для
  выполнения функционала, изложенного здесь."""
+
 import wsqluse.wsqluse
 
 from wserver_compound import functions
@@ -465,3 +466,11 @@ def fix_act_asc(sql_shell, polygon_id, record_id):
     functions.set_all_external_systems_act_send_settings(sql_shell,
                                                          polygon_id,
                                                          record_id)
+
+@wsqluse.wsqluse.tryExecuteGetStripper
+def check_legit(sql_shell, mac_addr: str):
+    """Проверяет легитимность мак адреса AR"""
+    command = "SELECT active FROM ar_mac_addr WHERE mac_addr='{}'".format(mac_addr)
+    response = sql_shell.try_execute_get(command)
+    return response
+

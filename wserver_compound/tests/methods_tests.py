@@ -196,5 +196,11 @@ class FunctionsTest(unittest.TestCase):
         response = methods.set_alerts(test_sql_shell, 784719, 'huy')
         print(response)
 
+
+    def test_check_legit(self):
+        response = methods.check_legit(test_sql_shell, 'f4:6d:04:40:0a:fa')
+        print(response)
+
+
 if __name__ == '__main__':
     unittest.main()

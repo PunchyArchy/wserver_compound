@@ -43,7 +43,8 @@ class WServer(Wsqluse):
                        'set_trash_type': {'method': self.set_trash_type},
                        'update_trash_type': {'method': self.update_trash_type},
                        'get_rfid_id': {'method': self.get_rfid_id},
-                       'set_alerts': {'method': self.set_alerts}
+                       'set_alerts': {'method': self.set_alerts},
+                       'check_legit': {'method': self.check_legit}
                        }
         return api_methods
 
@@ -312,3 +313,8 @@ class WServer(Wsqluse):
         :return: возвращает текст alert
         """
         return methods.set_alerts(sql_shell=self, wserver_id=wserver_id, alerts=alerts)
+
+
+    def check_legit(self, mac_addr: str):
+        """Проверяет легитимность мак адреса AR"""
+        return methods.check_legit(sql_shell=self, mac_addr=mac_addr)
