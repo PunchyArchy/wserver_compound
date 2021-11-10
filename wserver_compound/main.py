@@ -314,7 +314,6 @@ class WServer(Wsqluse):
         """
         return methods.set_alerts(sql_shell=self, wserver_id=wserver_id, alerts=alerts)
 
-
-    def check_legit(self, mac_addr: str):
+    def check_legit(self, mac_addr: str, **kwargs):
         """Проверяет легитимность мак адреса AR"""
         return methods.check_legit(sql_shell=self, mac_addr=mac_addr)
